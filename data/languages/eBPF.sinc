@@ -2,7 +2,7 @@
 # eBPF Processor Specification for Ghidra
 ###############################################################################
 
-#eBPF is a RISC register machine with a total of 11 64-bit registers, a program counter and a 512 byte fixed-size stack. 
+#eBPF is a RISC register machine with a total of 11 64-bit registers, a program counter and a 512 byte fixed-size stack.
 #9 registers are general purpouse read-write, one is a read-only stack pointer and the program counter is implicit,
 #i.e. we can only jump to a certain offset from it. The eBPF registers are always 64-bit wide.
 
@@ -11,7 +11,7 @@ define space register type=register_space size=4;
 define space syscall type=ram_space size=2;
 
 define register offset=0 size=8 [ R0  R1  R2  R3  R4  R5  R6  R7  R8  R9  R10  PC ];
- 
+
 # Instruction encoding: Insop:8, dst_reg:4, src_reg:4, off:16, imm:32 - from lsb to msb
 define token instr(64)
 	imm=(32, 63) signed
@@ -27,7 +27,7 @@ define token instr(64)
 
 #We'll need this token to operate with LDDW instruction, which has 64 bit imm value
 define token immtoken(64)
-	imm2=(32, 63)		
+	imm2=(32, 63)
 ;
 
 #To operate with registers
@@ -102,11 +102,11 @@ attach variables [ src dst ] [  R0  R1  R2  R3  R4  R5  R6  R7  R8  R9  R10  _  
 		( (dst >> 40) & 0x000000000000ff00 ) |
 		( (dst >> 56) & 0x00000000000000ff );
 }
-	 
+
 #Memory instructions- Load and Store
 ###############################################################################
 
-#LDDW is the only 16-byte eBPF instruction which consists of two consecutive 8-byte blocks ('struct bpf_insn') 
+#LDDW is the only 16-byte eBPF instruction which consists of two consecutive 8-byte blocks ('struct bpf_insn')
 #and interpreted as single instruction which loads 64-bit imm value into dst. Encoding of LDDW:
 #LSR                                                                     				  			 MSR
 #			opcode		src		dst		offset		Low 8-byte imm	  zero-block	High 8-byte imm
@@ -115,8 +115,8 @@ attach variables [ src dst ] [  R0  R1  R2  R3  R4  R5  R6  R7  R8  R9  R10  _  
 
 :LDDW dst, concat  is imm & dst &  op_ld_st_mode=0x0 & op_ld_st_size=0x3 & op_insn_class=0x0; imm2 [ concat= (imm2 << 32) | imm; ] { dst = concat; }
 
-#BPF_LD_MAP_FD(DST, MAP_FD) -> second LDDW = pseudo LDDW insn used to refer to process-local map_fd 
-#For each instruction which needs relocation, it inject corresponding file descriptor to imm field. 
+#BPF_LD_MAP_FD(DST, MAP_FD) -> second LDDW = pseudo LDDW insn used to refer to process-local map_fd
+#For each instruction which needs relocation, it inject corresponding file descriptor to imm field.
 #As a part of protocol, src_reg is set to BPF_PSEUDO_MAP_FD (which defined as 1) to notify kernel this is a map loading instruction.
 
 :LDDW dst, imm  is imm & src=1 & dst & op_ld_st_mode=0x0 & op_ld_st_size=0x3 & op_insn_class=0x0; imm2 { dst = *:8 imm:8; }
@@ -168,97 +168,97 @@ attach variables [ src dst ] [  R0  R1  R2  R3  R4  R5  R6  R7  R8  R9  R10  _  
 
 joff: reloc  is off [ reloc = inst_next + off * 8; ] { export *:8 reloc; }
 
-:JA joff  is joff & op_alu_jmp_opcode=0x0 & op_alu_jmp_source=0 & op_insn_class=0x5 {	
+:JA joff  is joff & op_alu_jmp_opcode=0x0 & op_alu_jmp_source=0 & op_insn_class=0x5 {
 	goto joff;
 }
 
-:JEQ dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x1 & op_alu_jmp_source=0 & op_insn_class=0x5 {	
+:JEQ dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x1 & op_alu_jmp_source=0 & op_insn_class=0x5 {
 	if (dst==imm) goto joff;
 }
 
-:JEQ dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x1 & op_alu_jmp_source=1 & op_insn_class=0x5 {	  
+:JEQ dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x1 & op_alu_jmp_source=1 & op_insn_class=0x5 {
 	if (dst==src) goto joff;
 }
 
-:JGT dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x2 & op_alu_jmp_source=0 & op_insn_class=0x5 {	  
-	if (dst>imm) goto joff;	
+:JGT dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x2 & op_alu_jmp_source=0 & op_insn_class=0x5 {
+	if (dst>imm) goto joff;
 }
 
-:JGT dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x2 & op_alu_jmp_source=1 & op_insn_class=0x5 {	  
+:JGT dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x2 & op_alu_jmp_source=1 & op_insn_class=0x5 {
 	if (dst>src) goto joff;
 }
 
-:JGE dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x3 & op_alu_jmp_source=0 & op_insn_class=0x5 {	  
+:JGE dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x3 & op_alu_jmp_source=0 & op_insn_class=0x5 {
 	if (dst>=imm) goto joff;
 }
 
-:JGE dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x3 & op_alu_jmp_source=1 & op_insn_class=0x5 {	  
+:JGE dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x3 & op_alu_jmp_source=1 & op_insn_class=0x5 {
 	if (dst>=src) goto joff;
 }
 
-:JLT dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0xa & op_alu_jmp_source=0 & op_insn_class=0x5 {	  
+:JLT dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0xa & op_alu_jmp_source=0 & op_insn_class=0x5 {
 	if (dst<imm) goto joff;
 }
 
-:JLT dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0xa & op_alu_jmp_source=1 & op_insn_class=0x5 {	  
+:JLT dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0xa & op_alu_jmp_source=1 & op_insn_class=0x5 {
 	if (dst<src) goto joff;
 }
 
-:JLE dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0xb & op_alu_jmp_source=0 & op_insn_class=0x5 {	  
+:JLE dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0xb & op_alu_jmp_source=0 & op_insn_class=0x5 {
 	if (dst<=imm) goto joff;
 }
 
-:JLE dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0xb & op_alu_jmp_source=1 & op_insn_class=0x5 {	  
+:JLE dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0xb & op_alu_jmp_source=1 & op_insn_class=0x5 {
 	if (dst<=src) goto joff;
 }
 
-:JNE dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x5 & op_alu_jmp_source=0 & op_insn_class=0x5 {	  
+:JNE dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x5 & op_alu_jmp_source=0 & op_insn_class=0x5 {
 	if (dst!=imm) goto joff;
 }
 
-:JNE dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x5 & op_alu_jmp_source=1 & op_insn_class=0x5 {	  
-	if (dst!=src) goto joff;	
+:JNE dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x5 & op_alu_jmp_source=1 & op_insn_class=0x5 {
+	if (dst!=src) goto joff;
 }
 
-:JSGT dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x6 & op_alu_jmp_source=0 & op_insn_class=0x5 {	  
+:JSGT dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x6 & op_alu_jmp_source=0 & op_insn_class=0x5 {
 	if (dst s>imm) goto joff;
 }
 
-:JSGT dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x6 & op_alu_jmp_source=1 & op_insn_class=0x5 {	  
+:JSGT dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x6 & op_alu_jmp_source=1 & op_insn_class=0x5 {
 	if (dst s>src) goto joff;
 }
 
-:JSGE dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x7 & op_alu_jmp_source=0 & op_insn_class=0x5 {	  
+:JSGE dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x7 & op_alu_jmp_source=0 & op_insn_class=0x5 {
 	if (dst s>=imm) goto joff;
 }
 
-:JSGE dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x7 & op_alu_jmp_source=1 & op_insn_class=0x5 {	  
+:JSGE dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x7 & op_alu_jmp_source=1 & op_insn_class=0x5 {
 	if (dst s>=src) goto joff;
 }
 
-:JSLT dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0xc & op_alu_jmp_source=0 & op_insn_class=0x5 {	  
+:JSLT dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0xc & op_alu_jmp_source=0 & op_insn_class=0x5 {
 	if (dst s<imm) goto joff;
 }
 
-:JSLT dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0xc & op_alu_jmp_source=1 & op_insn_class=0x5 {	  
+:JSLT dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0xc & op_alu_jmp_source=1 & op_insn_class=0x5 {
 	if (dst s<src) goto joff;
 }
 
-:JSLE dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0xd & op_alu_jmp_source=0 & op_insn_class=0x5 {	  
+:JSLE dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0xd & op_alu_jmp_source=0 & op_insn_class=0x5 {
 	if (dst s<=imm) goto joff;
 }
 
-:JSLE dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0xd & op_alu_jmp_source=1 & op_insn_class=0x5 {	  
+:JSLE dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0xd & op_alu_jmp_source=1 & op_insn_class=0x5 {
 	if (dst s<=src) goto joff;
 }
 
 :JSET dst, imm, joff  is imm & joff & dst & op_alu_jmp_opcode=0x4 & op_alu_jmp_source=0 & op_insn_class=0x5 {
-	dst=dst & imm;	  
+	dst=dst & imm;
 	if (dst:1) goto joff;
 }
 
 :JSET dst, src, joff  is joff & src & dst & op_alu_jmp_opcode=0x4 & op_alu_jmp_source=1 & op_insn_class=0x5 {
-	dst=dst & src;	  
+	dst=dst & src;
 	if (dst:1) goto joff;
 }
 

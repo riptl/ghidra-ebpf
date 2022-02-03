@@ -9,15 +9,15 @@
   +    - cd to data directory containing this file
   +    - run ant
   -->
-                                     
+
 <project name="privateBuildDistribution" default="sleigh-compile">
-	
+
 	<property name="sleigh.compile.class" value="ghidra.pcodeCPort.slgh_compile.SleighCompile"/>
-	
+
 	<target name="sleigh-compile">
-	    
+
 	    <property name="framework.path" value="../../../Framework"/>
-		
+
 		<path id="sleigh.class.path">
 			<fileset dir="${framework.path}/SoftwareModeling/lib">
 				<include name="*.jar"/>
@@ -29,11 +29,11 @@
 				<include name="*.jar"/>
 			</fileset>
 		</path>
-		
+
 		<available classname="${sleigh.compile.class}" classpathref="sleigh.class.path" property="sleigh.compile.exists"/>
-			
+
 		<fail unless="sleigh.compile.exists" />
-		
+
 		<java classname="${sleigh.compile.class}"
 			classpathref="sleigh.class.path"
 			fork="true"
@@ -44,7 +44,7 @@
 			<arg value="-a"/>
 			<arg value="./languages"/>
 		</java>
-		
+
  	</target>
 
 </project>

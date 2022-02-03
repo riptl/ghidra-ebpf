@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <processor_spec>
-	 <programcounter register="PC"/>	 
+	 <programcounter register="PC"/>
 	   <default_symbols>
 			<symbol name="bpf_unspec" address="syscall:0x0"/>
 			<symbol name="bpf_map_lookup_elem" address="syscall:0x1"/>
@@ -29,7 +29,7 @@
 			<symbol name="bpf_get_route_realm" address="syscall:0x18"/>
 			<symbol name="bpf_perf_event_output" address="syscall:0x19"/>
 			<symbol name="bpf_skb_load_bytes" address="syscall:0x1a"/>
-			<symbol name="bpf_get_stackid" address="syscall:0x1b"/>	
+			<symbol name="bpf_get_stackid" address="syscall:0x1b"/>
 			<symbol name="bpf_csum_diff" address="syscall:0x1c"/>
 			<symbol name="bpf_skb_get_tunnel_opt" address="syscall:0x1d"/>
 			<symbol name="bpf_skb_set_tunnel_opt" address="syscall:0x1e"/>
@@ -65,9 +65,9 @@
 			<symbol name="bpf_override_return" address="syscall:0x3c"/>
 			<symbol name="bpf_sock_ops_cb_flags_set" address="syscall:0x3d"/>
 			<symbol name="bpf_msg_redirect_map" address="syscall:0x3e"/>
-			<symbol name="bpf_msg_apply_bytes" address="syscall:0x3f"/>	
+			<symbol name="bpf_msg_apply_bytes" address="syscall:0x3f"/>
        </default_symbols>
 	   <default_memory_blocks>
-          <memory_block name="eBPFHelper_functions" start_address="syscall:0" length="0x400" initialized="true"/>    
+          <memory_block name="eBPFHelper_functions" start_address="syscall:0" length="0x400" initialized="true"/>
        </default_memory_blocks>
 </processor_spec>

@@ -4,15 +4,15 @@ This project was initially started as a part of [Digital Security](https://githu
 
 The extension implements eBPF architecture support for Ghidra and allows for disassembly and decompilation of ELF files containing eBPF programs.
 
-Example of eBPF program you can get 
+Example of eBPF program you can get
 [here](https://github.com/vbpf/ebpf-samples).
 
 ![eBPF Extension](./images/eBPF.gif)
 
 # Installation
-  
-- Download Release version of extension and install it in Ghidra `File → Install Extensions...` 
-- Use gradle to build extension: `GHIDRA_INSTALL_DIR=${GHIDRA_HOME} gradle` and use Ghidra to install it: `File → Install Extensions...` 
+
+- Download Release version of extension and install it in Ghidra `File → Install Extensions...`
+- Use gradle to build extension: `GHIDRA_INSTALL_DIR=${GHIDRA_HOME} gradle` and use Ghidra to install it: `File → Install Extensions...`
 - Clone this repository to `\Ghidra\Extensions` directory.
 
 # Screenshots
@@ -43,10 +43,9 @@ Function Graph for eBPF
 
 * [Simple eBPF disassembler in Rust](https://github.com/badboy/ebpf-disasm)
 
-* [Rust virtual machine and JIT compiler for eBPF programs](https://github.com/qmonnet/rbpf) 
+* [Rust virtual machine and JIT compiler for eBPF programs](https://github.com/qmonnet/rbpf)
+  * [Solana rBPF fork](https://github.com/solana-labs/rbpf)
 
 * [eBPF helpers (all)](https://github.com/torvalds/linux/blob/v4.20/include/uapi/linux/bpf.h#L437)
 
 * [eBPF overview](https://www.collabora.com/news-and-blog/blog/2019/04/05/an-ebpf-overview-part-1-introduction/)
-
-

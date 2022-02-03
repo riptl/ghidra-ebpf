@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <compiler_spec>
-  <data_organization> 
+  <data_organization>
      <absolute_max_alignment value="0" />
      <machine_alignment value="2" />
      <default_alignment value="1" />
@@ -21,10 +21,10 @@
           <entry size="8" alignment="8" />
      </size_alignment_map>
   </data_organization>
-   <global> 
+   <global>
    	  <range space="ram"/>
    	  <range space="syscall"/>
-   </global> 
+   </global>
   <stackpointer register="R10" space="ram"/>
    <default_proto>
     <prototype name="__fastcall" extrapop="0" stackshift="0">
@@ -37,7 +37,7 @@
         </pentry>
         <pentry minsize="1" maxsize="8">
           <register name="R3"/>
-        </pentry>      
+        </pentry>
          <pentry minsize="1" maxsize="8">
           <register name="R4"/>
         </pentry>
@@ -52,12 +52,12 @@
        </output>
       <unaffected>
         <varnode space="ram" offset="8" size="8"/>
-        <register name="R6"/>       
+        <register name="R6"/>
 	    <register name="R7"/>
         <register name="R8"/>
-        <register name="R9"/>       
-		<register name="R10"/> 	
-      </unaffected> 
+        <register name="R9"/>
+		<register name="R10"/>
+      </unaffected>
     </prototype>
   </default_proto>
  </compiler_spec>
